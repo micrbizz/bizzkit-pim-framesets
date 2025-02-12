@@ -84,11 +84,12 @@
         $('.menu .item').tab();
         $('.ui.embed').embed();
 
+
         function fetchISSData() {
-            fetch('http://api.open-notify.org/iss-now.json')
+            fetch('https://api.wheretheiss.at/v1/satellites/25544')
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("issLocation").innerText = `Latitude: ${data.iss_position.latitude}, Longitude: ${data.iss_position.longitude}`;
+                    document.getElementById("issLocation").innerText = `Latitude: ${data.latitude}, Longitude: ${data.longitude}`;
                 });
         }
 
@@ -117,6 +118,8 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
+            setInterval(fetchISSData, 2000);
+            setInterval(fetchMarsWeather, 2000);
             fetchISSData();
             fetchMarsWeather();
             populateQueryParams();
