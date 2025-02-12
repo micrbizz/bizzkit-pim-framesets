@@ -4,12 +4,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Fomantic UI Demo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.2/semantic.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.2/semantic.min.js"></script>
 </head>
 
-<body>
-    <h1>Simple demo of an extension frameset</h1>
-    <p>Displaying <a href="https://micrbizz.github.io/bizzkit-pim-framesets/frameset1.html">https://micrbizz.github.io/bizzkit-pim-framesets/frameset1.html</a> </p>
+<body class="ui container">
+    <h1 class="ui header">Simple Demo of an Extension Frameset</h1>
+
+    <p>
+        Displaying <a href="https://micrbizz.github.io/bizzkit-pim-framesets/frameset1.html" 
+        class="ui link">
+        https://micrbizz.github.io/bizzkit-pim-framesets/frameset1.html</a>
+    </p>
+
+    <h2 class="ui dividing header">Query String Parameters</h2>
+    
+    <table class="ui celled table">
+        <thead>
+            <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody id="queryParamsTable"></tbody>
+    </table>
+
+    <script>
+        // Function to extract query parameters and populate the table
+        function populateQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tableBody = document.getElementById("queryParamsTable");
+
+            if (!urlParams.entries().next().done) { // If query params exist
+                urlParams.forEach((value, key) => {
+                    let row = `<tr>
+                        <td><strong>${key}</strong></td>
+                        <td>${value}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            } else {
+                tableBody.innerHTML = `<tr><td colspan="2" class="center aligned">No query parameters found</td></tr>`;
+            }
+        }
+
+        // Populate table on page load
+        document.addEventListener("DOMContentLoaded", populateQueryParams);
+    </script>
+
 </body>
 
 </html>
