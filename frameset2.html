@@ -25,6 +25,17 @@
     <h2 class="ui dividing header">Generated Barcodes</h2>
     <div class="ui two column grid" id="barcodesContainer"></div>
 
+    <h2 class="ui dividing header">Query String Parameters</h2>
+    <table class="ui celled table">
+        <thead>
+            <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody id="queryParamsTable"></tbody>
+    </table>
+
     <script>
         // Function to get query string value or generate a random one
         function getValueOrRandom(paramName) {
@@ -82,10 +93,29 @@
             }
         }
 
+        // Function to populate query string table
+        function populateQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tableBody = document.getElementById("queryParamsTable");
+
+            if (!urlParams.entries().next().done) { // If query params exist
+                urlParams.forEach((value, key) => {
+                    let row = `<tr>
+                        <td><strong>${key}</strong></td>
+                        <td>${value}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            } else {
+                tableBody.innerHTML = `<tr><td colspan="2" class="center aligned">No query parameters found</td></tr>`;
+            }
+        }
+
         // Run functions on page load
         document.addEventListener("DOMContentLoaded", () => {
             generateQRCodes();
             generateBarcodes();
+            populateQueryParams();
         });
     </script>
 
