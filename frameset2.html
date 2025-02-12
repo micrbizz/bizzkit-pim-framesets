@@ -9,7 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.2/semantic.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/qrious.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
 </head>
 
 <body class="ui container">
@@ -26,13 +26,13 @@
     <div class="ui two column grid" id="barcodesContainer"></div>
 
     <script>
-        // Function to get query string value or generate random one
+        // Function to get query string value or generate a random one
         function getValueOrRandom(paramName) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(paramName) || Math.random().toString(36).substring(2, 8).toUpperCase();
         }
 
-        // Function to generate QR Codes using QRious
+        // Function to generate QR Codes using QRCode.js
         function generateQRCodes() {
             const qrContainer = document.getElementById("qrCodesContainer");
 
@@ -43,15 +43,15 @@
                 column.innerHTML = `
                     <div class="ui segment">
                         <h4 class="ui center aligned header">${value}</h4>
-                        <canvas id="qrCanvas${i}" class="ui centered image"></canvas>
+                        <div id="qrCode${i}" class="ui centered image"></div>
                     </div>`;
                 qrContainer.appendChild(column);
 
                 // Generate QR Code
-                let qr = new QRious({
-                    element: document.getElementById(`qrCanvas${i}`),
-                    value: value,
-                    size: 150
+                new QRCode(document.getElementById(`qrCode${i}`), {
+                    text: value,
+                    width: 150,
+                    height: 150
                 });
             }
         }
