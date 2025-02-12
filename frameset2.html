@@ -9,42 +9,50 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.2/semantic.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/qrious.min.js"></script>
 </head>
 
 <body class="ui container">
-    <h1 class="ui header">Frameset demo - QR Codes & Barcodes</h1>
+    <h1 class="ui header">Demo 2 - QR Codes & Barcodes</h1>
 
     <p>
-        This demo generates random QR codes and barcodes.In a real application, these could be generated from PIM data based on query string values.
+        This demo generates random QR codes and barcodes. In a real application, these could be generated from PIM data based on query string values.
     </p>
 
-    <h2 class="ui dividing header">Randomly Generated QR Codes</h2>
-    <div class="ui four column grid" id="qrCodesContainer"></div>
+    <h2 class="ui dividing header">Generated QR Codes</h2>
+    <div class="ui two column grid" id="qrCodesContainer"></div>
 
-    <h2 class="ui dividing header">Randomly Generated Barcodes</h2>
-    <div class="ui four column grid" id="barcodesContainer"></div>
+    <h2 class="ui dividing header">Generated Barcodes</h2>
+    <div class="ui two column grid" id="barcodesContainer"></div>
 
     <script>
-        // Function to generate random alphanumeric string
-        function getRandomValue() {
-            return Math.random().toString(36).substring(2, 10).toUpperCase();
+        // Function to get query string value or generate random one
+        function getValueOrRandom(paramName) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(paramName) || Math.random().toString(36).substring(2, 8).toUpperCase();
         }
 
-        // Function to generate QR Codes using Google Chart API
+        // Function to generate QR Codes using QRious
         function generateQRCodes() {
             const qrContainer = document.getElementById("qrCodesContainer");
 
-            for (let i = 0; i < 4; i++) {
-                let value = getRandomValue();
-                let qrCodeHTML = `
-                    <div class="column">
-                        <div class="ui segment">
-                            <h4 class="ui center aligned header">${value}</h4>
-                            <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${value}" 
-                                class="ui centered image">
-                        </div>
+            for (let i = 0; i < 2; i++) {
+                let value = getValueOrRandom(`qr${i + 1}`);
+                let column = document.createElement("div");
+                column.className = "column";
+                column.innerHTML = `
+                    <div class="ui segment">
+                        <h4 class="ui center aligned header">${value}</h4>
+                        <canvas id="qrCanvas${i}" class="ui centered image"></canvas>
                     </div>`;
-                qrContainer.innerHTML += qrCodeHTML;
+                qrContainer.appendChild(column);
+
+                // Generate QR Code
+                let qr = new QRious({
+                    element: document.getElementById(`qrCanvas${i}`),
+                    value: value,
+                    size: 150
+                });
             }
         }
 
@@ -52,16 +60,16 @@
         function generateBarcodes() {
             const barcodeContainer = document.getElementById("barcodesContainer");
 
-            for (let i = 0; i < 4; i++) {
-                let value = getRandomValue();
-                let barcodeHTML = `
-                    <div class="column">
-                        <div class="ui segment">
-                            <h4 class="ui center aligned header">${value}</h4>
-                            <svg id="barcode${i}"></svg>
-                        </div>
+            for (let i = 0; i < 2; i++) {
+                let value = getValueOrRandom(`barcode${i + 1}`);
+                let column = document.createElement("div");
+                column.className = "column";
+                column.innerHTML = `
+                    <div class="ui segment">
+                        <h4 class="ui center aligned header">${value}</h4>
+                        <svg id="barcode${i}"></svg>
                     </div>`;
-                barcodeContainer.innerHTML += barcodeHTML;
+                barcodeContainer.appendChild(column);
 
                 // Generate Barcode
                 JsBarcode(`#barcode${i}`, value, {
