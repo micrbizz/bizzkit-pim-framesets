@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frameset Demo 3 - NASA Media & Data</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.2/semantic.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.2/semantic.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer/dist/model-viewer.min.js"></script>
+</head>
+
+<body class="ui container">
+    <h1 class="ui header">Demo 3 - NASA Media & Data</h1>
+
+    <p>
+        This demo includes NASA-related media, an interactive map, an AR model viewer, and a live data dashboard.
+    </p>
+
+    <div class="ui top attached tabular menu">
+        <a class="item active" data-tab="youtube">YouTube</a>
+        <a class="item" data-tab="vimeo">Vimeo</a>
+        <a class="item" data-tab="3d">3D Model</a>
+        <a class="item" data-tab="map">NASA Map</a>
+        <a class="item" data-tab="ar">AR Viewer</a>
+        <a class="item" data-tab="dashboard">Live Data</a>
+        <a class="item" data-tab="pdf">PDF Viewer</a>
+    </div>
+
+    <div class="ui bottom attached active tab segment" data-tab="youtube">
+        <div class="ui embed" data-source="youtube" data-id="wMnOo2zcjXA"></div>
+    </div>
+
+    <div class="ui bottom attached tab segment" data-tab="vimeo">
+        <div class="ui embed" data-source="vimeo" data-id="326662931"></div>
+    </div>
+
+    <div class="ui bottom attached tab segment" data-tab="3d">
+        <model-viewer src="https://modelviewer.dev/shared-assets/models/Astronaut.glb" alt="Astronaut 3D Model"
+            auto-rotate camera-controls class="ui centered segment" style="width: 100%; height: 400px;"></model-viewer>
+    </div>
+
+    <div class="ui bottom attached tab segment" data-tab="map">
+        <iframe
+            src="https://www.openstreetmap.org/export/embed.html?bbox=-81.0%2C28.0%2C-80.5%2C28.7&layer=mapnik&marker=28.5721,-80.648&zoom=17"
+            width="100%" height="400px" style="border: none;"></iframe>
+    </div>
+
+    <div class="ui bottom attached tab segment" data-tab="ar">
+        <model-viewer src="https://mars.nasa.gov/system/downloadable_items/42564_Perseverance.glb" alt="Mars Rover" ar
+            auto-rotate camera-controls class="ui centered segment" style="width: 100%; height: 400px;"></model-viewer>
+    </div>
+
+    <div class="ui bottom attached tab segment" data-tab="dashboard">
+        <div class="ui segment">
+            <h3>Live ISS Position</h3>
+            <p id="issLocation">Loading...</p>
+        </div>
+        <div class="ui segment">
+            <h3>Mars Weather</h3>
+            <p id="marsWeather">Loading...</p>
+        </div>
+    </div>
+
+    <div class="ui bottom attached tab segment" data-tab="pdf">
+        <iframe src="https://www.nasa.gov/wp-content/uploads/2023/01/55583main_vision_space_exploration2.pdf#toolbar=0"
+            width="100%" height="500px" style="border: none;"></iframe>
+    </div>
+
+    <h2 class="ui dividing header">Query String Parameters</h2>
+    <table class="ui celled table">
+        <thead>
+            <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody id="queryParamsTable"></tbody>
+    </table>
+
+    <script>
+        $('.menu .item').tab();
+        $('.ui.embed').embed();
+
+        function fetchISSData() {
+            fetch('http://api.open-notify.org/iss-now.json')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("issLocation").innerText = `Latitude: ${data.iss_position.latitude}, Longitude: ${data.iss_position.longitude}`;
+                });
+        }
+
+        function fetchMarsWeather() {
+            fetch('https://api.maas2.apollorion.com/')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("marsWeather").innerText = `Temp: ${data.min_temp}°C to ${data.max_temp}°C, Pressure: ${data.pressure} Pa`;
+                });
+        }
+
+        function populateQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tableBody = document.getElementById("queryParamsTable");
+            if (!urlParams.entries().next().done) {
+                urlParams.forEach((value, key) => {
+                    let row = `<tr>
+                        <td><strong>${key}</strong></td>
+                        <td>${value}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            } else {
+                tableBody.innerHTML = `<tr><td colspan="2" class="center aligned">No query parameters found</td></tr>`;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchISSData();
+            fetchMarsWeather();
+            populateQueryParams();
+        });
+    </script>
+</body>
+
+</html>
